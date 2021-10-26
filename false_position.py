@@ -8,30 +8,55 @@ Created on Tue Oct 19 12:19:50 2021
 import numpy as np
 import pandas as pd
 
-def fp(xu,xl):
-    return xu - ((f(xu)*(xl-xu))/(f(xl)-f(xu)))
-
 def f(x):
-    return x**2 - 4
+    return x**3+x-1
+    return x**3+x+1
+    return x**10-1
+    return (x**2)-4
+
+# Implementing False Position Method
+def falsePosition(x0,x1,e):
+    step = 1
+    print('\n\n*** FALSE POSITION METHOD IMPLEMENTATION ***')
+    condition = True
+    while condition:
+        x2 = x0 - (x1-x0) * f(x0)/( f(x1) - f(x0) )
+        print('Iteration-%d, x2 = %0.6f and f(x2) = %0.6f' % (step, x2, f(x2)))
+
+        if f(x0) * f(x2) < 0:
+            x1 = x2
+        else:
+            x0 = x2
+
+        step = step + 1
+        condition = abs(f(x2)) > e
+
+    print('\nRequired root is: %0.8f' % x2)
+
+
+
 
 if __name__ == '__main__':
-    xl,xu = 0,3
-    tolerance = 0.0000001
-    matrix = []
-    for _ in range(20):
-        xr = fp(xu,xl)
-        solution = (abs(f(xr)-f(xu)) < tolerance) or (abs(f(xr)-f(xl)) < tolerance)
-        matrix.append([xu,xl,xr,f(xl),f(xu),f(xr),solution])
-        xu = xr if np.sign(f(xu)*f(xr)) == 1 else xu 
-        xl = xr if np.sign(f(xl)*f(xr)) == 1 else xl
-        print([xl,xu,xr,f(xl),f(xu),f(xr)])
-        # print(f(xl),f(xr))
+    # Input Section
+    x0 = np.float128(input('First Guess: '))
+    x1 = np.float128(input('Second Guess: '))
+    e = np.float128(input('Tolerable Error: '))
     
-    pd.DataFrame(
-        matrix,
-        columns=[
-            'xu','xl','xr',
-            'f(xl)','f(xu)','f(xr)','solution'
-            ]
-        ).to_csv("excels/false_position.csv")
+    # Converting input to float
+    # x0 = float(x0)
+    # x1 = float(x1)
+    # e = float(e)
+    
+    #Note: You can combine above two section like this
+    # x0 = float(input('First Guess: '))
+    # x1 = float(input('Second Guess: '))
+    # e = float(input('Tolerable Error: '))
+    
+    
+    # Checking Correctness of initial guess values and false positioning
+    if f(x0) * f(x1) > 0.0:
+        print('Given guess values do not bracket the root.')
+        print('Try Again with different guess values.')
+    else:
+        falsePosition(x0,x1,e)
     
